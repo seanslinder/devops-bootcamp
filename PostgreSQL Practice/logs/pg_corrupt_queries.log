@@ -1,0 +1,22 @@
+ id |   full_name   |   rank   | ship_id |  hired_at  
+----+---------------+----------+---------+------------
+  1 | Ivan Petrov   | Captain  |       1 | 2026-11-03
+  2 | Anna Smirnova | Pilot    |       1 | 2026-11-03
+  3 | Oleg Sidorov  | Engineer |       1 | 2026-11-03
+(3 rows)
+
+    full_name    |   name   
+-----------------+----------
+ Ivan Petrov     | Aurora
+ Anna Smirnova   | Aurora
+ Oleg Sidorov    | Aurora
+ Maria Volkova   | Aurora
+ Denis Kuznetsov | Aurora
+ Ellen Ripley    | Nostromo
+ Arthur Dallas   | Nostromo
+ Joan Lambert    | Nostromo
+ Dennis Parker   | Nostromo
+ Samuel Brett    | Nostromo
+ Test User       | Aurora
+(11 rows)
+

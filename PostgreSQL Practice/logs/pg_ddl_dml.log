@@ -1,0 +1,42 @@
+DROP TABLE IF EXISTS crew;
+DROP TABLE
+DROP TABLE IF EXISTS ships;
+DROP TABLE
+CREATE TABLE ships (
+    id    SERIAL PRIMARY KEY,
+    name  VARCHAR(50) NOT NULL UNIQUE,
+    class VARCHAR(30)
+);
+CREATE TABLE
+CREATE TABLE crew (
+    id        SERIAL PRIMARY KEY,
+    full_name VARCHAR(80) NOT NULL,
+    rank      VARCHAR(30) NOT NULL,
+    ship_id   INTEGER REFERENCES ships(id),
+    hired_at  DATE DEFAULT CURRENT_DATE
+);
+CREATE TABLE
+INSERT INTO ships (name, class) VALUES
+    ('Aurora', 'Cruiser'),
+    ('Nostromo', 'Freighter');
+INSERT 0 2
+INSERT INTO crew (full_name, rank, ship_id) VALUES ('Ivan Petrov',    'Captain',   1);
+INSERT 0 1
+INSERT INTO crew (full_name, rank, ship_id) VALUES ('Anna Smirnova',  'Pilot',     1);
+INSERT 0 1
+INSERT INTO crew (full_name, rank, ship_id) VALUES ('Oleg Sidorov',   'Engineer',  1);
+INSERT 0 1
+INSERT INTO crew (full_name, rank, ship_id) VALUES ('Maria Volkova',  'Medic',     1);
+INSERT 0 1
+INSERT INTO crew (full_name, rank, ship_id) VALUES ('Denis Kuznetsov','Navigator', 1);
+INSERT 0 1
+INSERT INTO crew (full_name, rank, ship_id) VALUES ('Ellen Ripley',   'Officer',   2);
+INSERT 0 1
+INSERT INTO crew (full_name, rank, ship_id) VALUES ('Arthur Dallas',  'Captain',   2);
+INSERT 0 1
+INSERT INTO crew (full_name, rank, ship_id) VALUES ('Joan Lambert',   'Navigator', 2);
+INSERT 0 1
+INSERT INTO crew (full_name, rank, ship_id) VALUES ('Dennis Parker',  'Engineer',  2);
+INSERT 0 1
+INSERT INTO crew (full_name, rank, ship_id) VALUES ('Samuel Brett',   'Engineer',  2);
+INSERT 0 1

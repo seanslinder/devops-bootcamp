@@ -1,0 +1,9 @@
+filebeat.inputs:
+  - type: filestream
+    id: varlog
+    paths:
+      - /var/log/syslog
+      - /var/log/auth.log
+      - /var/log/nginx/*.log
+output.logstash:
+  hosts: ["localhost:5044"]

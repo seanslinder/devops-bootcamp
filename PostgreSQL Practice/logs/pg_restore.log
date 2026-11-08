@@ -1,0 +1,17 @@
+pg_restore: connecting to database for restore
+pg_restore: creating TABLE "public.crew"
+pg_restore: creating SEQUENCE "public.crew_id_seq"
+pg_restore: creating SEQUENCE OWNED BY "public.crew_id_seq"
+pg_restore: creating TABLE "public.ships"
+pg_restore: creating SEQUENCE "public.ships_id_seq"
+pg_restore: creating SEQUENCE OWNED BY "public.ships_id_seq"
+pg_restore: creating DEFAULT "public.crew id"
+pg_restore: creating DEFAULT "public.ships id"
+pg_restore: processing data for table "public.crew"
+pg_restore: processing data for table "public.ships"
+pg_restore: executing SEQUENCE SET crew_id_seq
+pg_restore: executing SEQUENCE SET ships_id_seq
+pg_restore: creating CONSTRAINT "public.crew crew_pkey"
+pg_restore: creating CONSTRAINT "public.ships ships_name_key"
+pg_restore: creating CONSTRAINT "public.ships ships_pkey"
+pg_restore: creating FK CONSTRAINT "public.crew crew_ship_id_fkey"

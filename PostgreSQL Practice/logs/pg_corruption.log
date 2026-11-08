@@ -1,0 +1,3 @@
+UPDATE 11
+NOTICE:  drop cascades to constraint crew_ship_id_fkey on table crew
+DROP TABLE

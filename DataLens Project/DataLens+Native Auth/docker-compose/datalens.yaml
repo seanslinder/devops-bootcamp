@@ -1,0 +1,368 @@
+name: datalens
+services:
+  auth:
+    container_name: datalens-auth
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: true
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      APP_ENV: prod
+      APP_INSTALLATION: opensource
+      AUTH_ADMIN_PASSWORD: ${AUTH_ADMIN_PASSWORD}
+      AUTH_SIGNUP_DISABLED: "false"
+      DISABLE_WILDCARD_COOKIE: "true"
+      MASTER_TOKEN: ${AUTH_MASTER_TOKEN}
+      POSTGRES_DSN_LIST: postgres://pg-user:${POSTGRES_PASSWORD}@postgres:5432/pg-auth-db
+      SKIP_INSTALL_DB_EXTENSIONS: "1"
+      TOKEN_PRIVATE_KEY: "${TOKEN_PRIVATE_KEY}"
+      TOKEN_PUBLIC_KEY: |
+        -----BEGIN PUBLIC KEY-----
+        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvIEqrcapTt5sAO4TYKY6
+        mxkbBY9IKAy88K/B967ssBkhkD/drJPwKCui2VLxLCWob5hDPPmRdcFeJuTB1ldE
+        EZDrIKReGKcMfXdUxCLy9Os6hJAmA1/Ys4MQkp/NgWfw9QdhgkiN6HfeXSfP/8i5
+        2qp4lPxzPR8HUi5V7Ez3Kj3AvD9XEJm3zrxa2tLfhcJ8gYoN6wyk0QuPx94DhlmE
+        XZr8/hdZNsz+5TkIq2iPA9SIzzMGKmil4dvDqccJPvLUemPWxMda2ZyU/XiSCw7L
+        tTMc309LAvtv6C2TGqJNNcqx8PMosEW38LvJdvZ8F380+PjMGAL6t+s/zg1ZurBa
+        kSlIxmZ9rDNYJZixybDCN3NrHlmO7KeH8aMNiIpGW6w84hr7xViLdZdbWwDbV3y5
+        F6vwbG2etFDGQde/rN0TkW8gDBr8Zsupsi9z888QfPg1M4HRbyTyRWk1Bpxi/6Mh
+        T1utkZu8L+7d4pMCZwczTqHuyrj0qH1z6lW63QwbXn6LxbnCaF24ZT7MBi0g6LVX
+        QZElbujpgJOyLCIZ19DQj4oU+8SbszboGj6gl66RLSW/ybBYEMkuPiA0XwWefGKD
+        M5GNWOPOFoKE9Hjuvi1OsY2INHmBuUzZjLAWAU3494S7F799w+FWqa5BRGgIwCN2
+        iWD9pJW55FgSgPcAiJUFYYMCAwEAAQ==
+        -----END PUBLIC KEY-----
+      UI_APP_ENDPOINT: ""
+      US_MASTER_TOKEN: ${US_MASTER_TOKEN}
+      US_SURPRESS_DB_STATUS_LOGS: "true"
+    image: ghcr.io/datalens-tech/datalens-auth:0.27.0
+    networks:
+      default: null
+  control-api:
+    container_name: datalens-control-api
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      AUTH__JWT_ALGORITHM: PS256
+      AUTH__JWT_KEY: |
+        -----BEGIN PUBLIC KEY-----
+        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvIEqrcapTt5sAO4TYKY6
+        mxkbBY9IKAy88K/B967ssBkhkD/drJPwKCui2VLxLCWob5hDPPmRdcFeJuTB1ldE
+        EZDrIKReGKcMfXdUxCLy9Os6hJAmA1/Ys4MQkp/NgWfw9QdhgkiN6HfeXSfP/8i5
+        2qp4lPxzPR8HUi5V7Ez3Kj3AvD9XEJm3zrxa2tLfhcJ8gYoN6wyk0QuPx94DhlmE
+        XZr8/hdZNsz+5TkIq2iPA9SIzzMGKmil4dvDqccJPvLUemPWxMda2ZyU/XiSCw7L
+        tTMc309LAvtv6C2TGqJNNcqx8PMosEW38LvJdvZ8F380+PjMGAL6t+s/zg1ZurBa
+        kSlIxmZ9rDNYJZixybDCN3NrHlmO7KeH8aMNiIpGW6w84hr7xViLdZdbWwDbV3y5
+        F6vwbG2etFDGQde/rN0TkW8gDBr8Zsupsi9z888QfPg1M4HRbyTyRWk1Bpxi/6Mh
+        T1utkZu8L+7d4pMCZwczTqHuyrj0qH1z6lW63QwbXn6LxbnCaF24ZT7MBi0g6LVX
+        QZElbujpgJOyLCIZ19DQj4oU+8SbszboGj6gl66RLSW/ybBYEMkuPiA0XwWefGKD
+        M5GNWOPOFoKE9Hjuvi1OsY2INHmBuUzZjLAWAU3494S7F799w+FWqa5BRGgIwCN2
+        iWD9pJW55FgSgPcAiJUFYYMCAwEAAQ==
+        -----END PUBLIC KEY-----
+      AUTH__TYPE: NATIVE
+      BI_API_UWSGI_WORKERS_COUNT: "4"
+      CONNECTOR_AVAILABILITY_VISIBLE: clickhouse,postgres,chyt,ydb,mysql,greenplum,mssql,oracle,trino,appmetrica_api,metrika_api
+      DL_CRY_ACTUAL_KEY_ID: KEY
+      DL_CRY_KEY_VAL_ID_KEY: MWJubnQyV2trQndnNzlxZ0dyanpmVExRZjUxNElDaFM=
+      RQE_FORCE_OFF: "1"
+      RQE_SECRET_KEY: ""
+      US_DYNAMIC_AUTH_PRIVATE_KEY: "${US_DYNAMIC_AUTH_PRIVATE_KEY}"
+      US_HOST: http://us:8080
+      US_MASTER_TOKEN: ${US_MASTER_TOKEN}
+    image: ghcr.io/datalens-tech/datalens-control-api:0.2457.0
+    networks:
+      default: null
+  data-api:
+    container_name: datalens-data-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: true
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      AUTH__JWT_ALGORITHM: PS256
+      AUTH__JWT_KEY: |
+        -----BEGIN PUBLIC KEY-----
+        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvIEqrcapTt5sAO4TYKY6
+        mxkbBY9IKAy88K/B967ssBkhkD/drJPwKCui2VLxLCWob5hDPPmRdcFeJuTB1ldE
+        EZDrIKReGKcMfXdUxCLy9Os6hJAmA1/Ys4MQkp/NgWfw9QdhgkiN6HfeXSfP/8i5
+        2qp4lPxzPR8HUi5V7Ez3Kj3AvD9XEJm3zrxa2tLfhcJ8gYoN6wyk0QuPx94DhlmE
+        XZr8/hdZNsz+5TkIq2iPA9SIzzMGKmil4dvDqccJPvLUemPWxMda2ZyU/XiSCw7L
+        tTMc309LAvtv6C2TGqJNNcqx8PMosEW38LvJdvZ8F380+PjMGAL6t+s/zg1ZurBa
+        kSlIxmZ9rDNYJZixybDCN3NrHlmO7KeH8aMNiIpGW6w84hr7xViLdZdbWwDbV3y5
+        F6vwbG2etFDGQde/rN0TkW8gDBr8Zsupsi9z888QfPg1M4HRbyTyRWk1Bpxi/6Mh
+        T1utkZu8L+7d4pMCZwczTqHuyrj0qH1z6lW63QwbXn6LxbnCaF24ZT7MBi0g6LVX
+        QZElbujpgJOyLCIZ19DQj4oU+8SbszboGj6gl66RLSW/ybBYEMkuPiA0XwWefGKD
+        M5GNWOPOFoKE9Hjuvi1OsY2INHmBuUzZjLAWAU3494S7F799w+FWqa5BRGgIwCN2
+        iWD9pJW55FgSgPcAiJUFYYMCAwEAAQ==
+        -----END PUBLIC KEY-----
+      AUTH__TYPE: NATIVE
+      BI_COMPENG_PG_ON: "1"
+      BI_COMPENG_PG_URL: postgres://pg-user:${POSTGRES_PASSWORD}@postgres:5432/pg-compeng-db
+      CACHES_ON: "0"
+      DL_CRY_ACTUAL_KEY_ID: KEY
+      DL_CRY_KEY_VAL_ID_KEY: MWJubnQyV2trQndnNzlxZ0dyanpmVExRZjUxNElDaFM=
+      GUNICORN_WORKERS_COUNT: "5"
+      MUTATIONS_CACHES_ON: "0"
+      RQE_FORCE_OFF: "1"
+      RQE_SECRET_KEY: ""
+      US_DYNAMIC_AUTH_PRIVATE_KEY: "${US_DYNAMIC_AUTH_PRIVATE_KEY}"
+      US_HOST: http://us:8080
+      US_MASTER_TOKEN: ${US_MASTER_TOKEN}
+    image: ghcr.io/datalens-tech/datalens-data-api:0.2457.0
+    networks:
+      default: null
+  meta-manager:
+    container_name: datalens-meta-manager
+    depends_on:
+      temporal:
+        condition: service_healthy
+        required: true
+      ui-api:
+        condition: service_started
+        required: true
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      APP_ENV: prod
+      APP_INSTALLATION: opensource
+      APP_PORT: "8080"
+      AUTH_ENABLED: "true"
+      AUTH_TOKEN_PUBLIC_KEY: |
+        -----BEGIN PUBLIC KEY-----
+        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvIEqrcapTt5sAO4TYKY6
+        mxkbBY9IKAy88K/B967ssBkhkD/drJPwKCui2VLxLCWob5hDPPmRdcFeJuTB1ldE
+        EZDrIKReGKcMfXdUxCLy9Os6hJAmA1/Ys4MQkp/NgWfw9QdhgkiN6HfeXSfP/8i5
+        2qp4lPxzPR8HUi5V7Ez3Kj3AvD9XEJm3zrxa2tLfhcJ8gYoN6wyk0QuPx94DhlmE
+        XZr8/hdZNsz+5TkIq2iPA9SIzzMGKmil4dvDqccJPvLUemPWxMda2ZyU/XiSCw7L
+        tTMc309LAvtv6C2TGqJNNcqx8PMosEW38LvJdvZ8F380+PjMGAL6t+s/zg1ZurBa
+        kSlIxmZ9rDNYJZixybDCN3NrHlmO7KeH8aMNiIpGW6w84hr7xViLdZdbWwDbV3y5
+        F6vwbG2etFDGQde/rN0TkW8gDBr8Zsupsi9z888QfPg1M4HRbyTyRWk1Bpxi/6Mh
+        T1utkZu8L+7d4pMCZwczTqHuyrj0qH1z6lW63QwbXn6LxbnCaF24ZT7MBi0g6LVX
+        QZElbujpgJOyLCIZ19DQj4oU+8SbszboGj6gl66RLSW/ybBYEMkuPiA0XwWefGKD
+        M5GNWOPOFoKE9Hjuvi1OsY2INHmBuUzZjLAWAU3494S7F799w+FWqa5BRGgIwCN2
+        iWD9pJW55FgSgPcAiJUFYYMCAwEAAQ==
+        -----END PUBLIC KEY-----
+      EXPORT_DATA_VERIFICATION_KEY: voGcvX4RkY4V597GAfQufHmExUjMw6Mc
+      POSTGRES_DSN_LIST: postgres://pg-user:${POSTGRES_PASSWORD}@postgres:5432/pg-meta-manager-db
+      TEMPORAL_AUTH_ENABLED: "true"
+      TEMPORAL_AUTH_PRIVATE_KEY: "${TEMPORAL_AUTH_PRIVATE_KEY}"
+      TEMPORAL_ENDPOINT: temporal:7233
+      UI_API_ENDPOINT: http://ui-api:8080
+      US_ENDPOINT: http://us:8080
+      US_MASTER_TOKEN: ${US_MASTER_TOKEN}
+    image: ghcr.io/datalens-tech/datalens-meta-manager:0.52.0
+    networks:
+      default: null
+  postgres:
+    container_name: datalens-postgres
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      CONTROL_API_CRYPTO_KEY: MWJubnQyV2trQndnNzlxZ0dyanpmVExRZjUxNElDaFM=
+      HC: "0"
+      INIT_DB_AUTH: "1"
+      INIT_DB_DEMO: "1"
+      INIT_DB_META_MANAGER: "1"
+      INIT_DB_TEMPORAL: "1"
+      INIT_DEMO_DATA: "1"
+      INIT_EXTERNAL_POSTGRES: "0"
+      POSTGRES_DB_AUTH: pg-auth-db
+      POSTGRES_DB_COMPENG: pg-compeng-db
+      POSTGRES_DB_DEMO: pg-demo-db
+      POSTGRES_DB_META_MANAGER: pg-meta-manager-db
+      POSTGRES_DB_TEMPORAL: pg-temporal-db
+      POSTGRES_DB_TEMPORAL_VISIBILITY: pg-temporal-visibility-db
+      POSTGRES_DB_US: pg-us-db
+      POSTGRES_HOST: localhost
+      POSTGRES_MAX_CONNECTIONS: "512"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: pg-user
+      US_ENDPOINT: http://us:8080
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - -d
+        - pg-us-db
+        - -U
+        - pg-user
+      timeout: 5s
+      interval: 10s
+      retries: 6
+      start_period: 3s
+    image: ghcr.io/datalens-tech/datalens-postgres:16-1.3.0
+    networks:
+      default: null
+    pull_policy: always
+    volumes:
+      - type: volume
+        source: db-postgres
+        target: /var/lib/postgresql/data
+        volume: {}
+  temporal:
+    container_name: datalens-temporal
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: true
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      NAMESPACES: meta-manager
+      POSTGRES_DB: pg-temporal-db
+      POSTGRES_DB_VISIBILITY: pg-temporal-visibility-db
+      POSTGRES_HOST: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: "5432"
+      POSTGRES_TLS_CA_FILE: ""
+      POSTGRES_TLS_DISABLE_HOST_VERIFICATION: "true"
+      POSTGRES_TLS_ENABLED: "false"
+      POSTGRES_USER: pg-user
+      TEMPORAL_AUTH_ENABLED: "true"
+      TEMPORAL_AUTH_PRIVATE_KEY: "${TEMPORAL_AUTH_PRIVATE_KEY}"
+      TEMPORAL_AUTH_PUBLIC_KEY: '-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA4EKj4Xch+JjSwSOc4tLz\n3SUpwYBq6+41PQso6YB3D9y53e79PnCSvFIq5aEl/1aHjEHrBDC9oWst4A/GJiFh\nxSp22bLmGU+SX3TlTRJbv876ly3/E/pFMURmh4Oq0pLbKrlqO5ifImbntoEyC2Qd\n+BAGZ50xXpj/DCMmSI0XCOkIaUvrWHdGuefrmSDrJURV121IAc4VtFUOkZQR3vdi\nlXXZFkh7CtXdun5FBDYdvIi7ugk5/1sVFOWviOoJx01LiHAshfKvHRCEI9PcPy1J\nzlBPq7BLI2KHp40VSDNqVaYOkv6B+Y9nmatA0d/pJ1KWR0SJQ2He+UP/rZ31Yt4f\nk6atJql1U8C0hlyj3MHrWyW1/j/SrUzAw9nf/Dc2iOzS0R3+2Y53+1PAe80uVqwn\nu3mL7wgHFPOgj6JeW5yO3nzFJSXBMm7L+MpTO24HAbCnMOX3N8z62R1Sik9cjfU2\nHVcLDRiUO3UVFMCoyXuFO7aI6R91vckhplqZ9Rzz0mhOxsCHBPscf1OGLAu4KdgC\nuxAhK+6ljngv9sooYex/WvcauLuK/AcXirvt682iq7CRkbt2EtZJ54VciONJUa7I\nrrvBCgVqfgsc1HXQ/bIqiKjWY+HIe6ECA19IdQyhSTXIdl+eRhyyxWCP43OgJ2xj\n97BRt4atjOPKNZTNmmb2Xb0CAwEAAQ==\n-----END
+        PUBLIC KEY-----\n'
+    healthcheck:
+      test:
+        - CMD
+        - /etc/temporal/healthcheck.sh
+      timeout: 5s
+      interval: 10s
+      retries: 6
+      start_period: 3s
+    image: ghcr.io/datalens-tech/datalens-temporal:1.27.2
+    networks:
+      default: null
+    pull_policy: always
+  ui:
+    container_name: datalens-ui
+    depends_on:
+      us:
+        condition: service_started
+        required: true
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      APP_ENV: production
+      APP_INSTALLATION: opensource
+      APP_MODE: full
+      AUTH_ENABLED: "true"
+      AUTH_ENDPOINT: http://auth:8080
+      AUTH_MASTER_TOKEN: ${AUTH_MASTER_TOKEN}
+      AUTH_POLICY: disabled
+      AUTH_SIGNUP_DISABLED: "false"
+      AUTH_TOKEN_PUBLIC_KEY: |
+        -----BEGIN PUBLIC KEY-----
+        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvIEqrcapTt5sAO4TYKY6
+        mxkbBY9IKAy88K/B967ssBkhkD/drJPwKCui2VLxLCWob5hDPPmRdcFeJuTB1ldE
+        EZDrIKReGKcMfXdUxCLy9Os6hJAmA1/Ys4MQkp/NgWfw9QdhgkiN6HfeXSfP/8i5
+        2qp4lPxzPR8HUi5V7Ez3Kj3AvD9XEJm3zrxa2tLfhcJ8gYoN6wyk0QuPx94DhlmE
+        XZr8/hdZNsz+5TkIq2iPA9SIzzMGKmil4dvDqccJPvLUemPWxMda2ZyU/XiSCw7L
+        tTMc309LAvtv6C2TGqJNNcqx8PMosEW38LvJdvZ8F380+PjMGAL6t+s/zg1ZurBa
+        kSlIxmZ9rDNYJZixybDCN3NrHlmO7KeH8aMNiIpGW6w84hr7xViLdZdbWwDbV3y5
+        F6vwbG2etFDGQde/rN0TkW8gDBr8Zsupsi9z888QfPg1M4HRbyTyRWk1Bpxi/6Mh
+        T1utkZu8L+7d4pMCZwczTqHuyrj0qH1z6lW63QwbXn6LxbnCaF24ZT7MBi0g6LVX
+        QZElbujpgJOyLCIZ19DQj4oU+8SbszboGj6gl66RLSW/ybBYEMkuPiA0XwWefGKD
+        M5GNWOPOFoKE9Hjuvi1OsY2INHmBuUzZjLAWAU3494S7F799w+FWqa5BRGgIwCN2
+        iWD9pJW55FgSgPcAiJUFYYMCAwEAAQ==
+        -----END PUBLIC KEY-----
+      BI_API_ENDPOINT: http://control-api:8080
+      BI_DATA_ENDPOINT: http://data-api:8080
+      EXPORT_WORKBOOK_ENABLED: "true"
+      HC: "0"
+      HC_ENDPOINT: ""
+      HC_MODULES: ""
+      HC_PROTOCOL: ""
+      META_MANAGER_ENDPOINT: http://meta-manager:8080
+      RELEASE_VERSION: 2.9.0
+      US_DYNAMIC_MASTER_TOKEN_PRIVATE_KEY: "${US_DYNAMIC_MASTER_TOKEN_PRIVATE_KEY}"
+      US_ENDPOINT: http://us:8080
+      US_MASTER_TOKEN: ${US_MASTER_TOKEN}
+      YANDEX_MAP_ENABLED: "0"
+      YANDEX_MAP_TOKEN: ""
+    image: ghcr.io/datalens-tech/datalens-ui:0.3831.0
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 8080
+        published: "8080"
+        protocol: tcp
+  ui-api:
+    container_name: datalens-ui-api
+    depends_on:
+      us:
+        condition: service_started
+        required: true
+
+    environment:
+      APP_ENV: production
+      APP_INSTALLATION: opensource
+      APP_MODE: api
+      BI_API_ENDPOINT: http://control-api:8080
+      US_ENDPOINT: http://us:8080
+    image: ghcr.io/datalens-tech/datalens-ui:0.3831.0
+    networks:
+      default: null
+  us:
+    container_name: datalens-us
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: true
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      APP_ENV: prod
+      APP_INSTALLATION: opensource
+      APP_PORT: "8080"
+      AUTH_ENABLED: "true"
+      AUTH_ENDPOINT: http://auth:8080
+      AUTH_MASTER_TOKEN: ${AUTH_MASTER_TOKEN}
+      AUTH_TOKEN_PUBLIC_KEY: |
+        -----BEGIN PUBLIC KEY-----
+        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvIEqrcapTt5sAO4TYKY6
+        mxkbBY9IKAy88K/B967ssBkhkD/drJPwKCui2VLxLCWob5hDPPmRdcFeJuTB1ldE
+        EZDrIKReGKcMfXdUxCLy9Os6hJAmA1/Ys4MQkp/NgWfw9QdhgkiN6HfeXSfP/8i5
+        2qp4lPxzPR8HUi5V7Ez3Kj3AvD9XEJm3zrxa2tLfhcJ8gYoN6wyk0QuPx94DhlmE
+        XZr8/hdZNsz+5TkIq2iPA9SIzzMGKmil4dvDqccJPvLUemPWxMda2ZyU/XiSCw7L
+        tTMc309LAvtv6C2TGqJNNcqx8PMosEW38LvJdvZ8F380+PjMGAL6t+s/zg1ZurBa
+        kSlIxmZ9rDNYJZixybDCN3NrHlmO7KeH8aMNiIpGW6w84hr7xViLdZdbWwDbV3y5
+        F6vwbG2etFDGQde/rN0TkW8gDBr8Zsupsi9z888QfPg1M4HRbyTyRWk1Bpxi/6Mh
+        T1utkZu8L+7d4pMCZwczTqHuyrj0qH1z6lW63QwbXn6LxbnCaF24ZT7MBi0g6LVX
+        QZElbujpgJOyLCIZ19DQj4oU+8SbszboGj6gl66RLSW/ybBYEMkuPiA0XwWefGKD
+        M5GNWOPOFoKE9Hjuvi1OsY2INHmBuUzZjLAWAU3494S7F799w+FWqa5BRGgIwCN2
+        iWD9pJW55FgSgPcAiJUFYYMCAwEAAQ==
+        -----END PUBLIC KEY-----
+      BI_MASTER_TOKEN_PUBLIC_KEY_PRIMARY: '-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAr5Db+1G7cVQBHbIOw7zI\nulR5gqRsquCJIvoGJdpmG2MtUsj2XOaJnVBMrgCEbqP0FxesgxAKSSbg7h+uEsrK\nmaNAbtOEnWJ2KkCS74RsR6mAd+sVBh6XUSFQ1dw4AvM3QSK6zjM7FMNXS7tECMze\nTZxiPio9PSkaIo7s5YwPz3r+hfEG0RRiSsWml/U7fa8J36gacmTKSJprM7Pans3d\nCp1+MoDc3lwppr5WkaXKYvX3/vL/f2MEOIFDCQV0EsKOENiAS9MKVTfCPHDc7xbi\nWj/AcQ6q2ZQGjrQjdKdWnAO472IkeZ+MwS9ydZTAS3jJXoqo6NmQY8Mr0x2dzLcX\nOX5FbCLAAR2+k39XKkEcuCDb6w8FgqQpdyM6SM5Sjg92kTy+GJNwc4DfCh4Y8H+V\nHuWH8XMd//W1xdzPqsVK68feZWLF+qsDE6ltIGK5cphsAH9Rp0wOLPDzW3NV+Rv+\nzOcLi1idpMdGU75Wdl0ONsK+mBmjS30MCnuSYr2cNL3cTkomdtD3U5GN+isbxZZm\n6KgCDJu5ZSXy0yIbGlb4RRKP2tKqhQHRp48yhJ3uRosUnBfJL7JxDwho+VkLgjvH\nI8qr3TbizbJx9M/uHwgXBMxENpmgNJ6NrqHfdda5CPT6/DI1hEvgedG3h4rFuZ36\nmA07/D7JooNpinmWdbaP3vcCAwEAAQ==\n-----END
+        PUBLIC KEY-----\n'
+      HC: "0"
+      MASTER_TOKEN: ${US_MASTER_TOKEN}
+      POSTGRES_DSN_LIST: postgres://pg-user:${POSTGRES_PASSWORD}@postgres:5432/pg-us-db
+      SKIP_INSTALL_DB_EXTENSIONS: "1"
+      UI_MASTER_TOKEN_PUBLIC_KEY_PRIMARY: '-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAtHzfJ81+9IT5UB+Owd1p\ndpJDARc4iiTtVKHjTpUP1acsC3UEXeCsAcBYbImGzfSf4Jjtrnm3n4l01gxce62O\n4DV1yHvKQpsGgmqpCQUTrs9n72G/a56e3aPKyeKnnGiBU08TALru25RQFaXCPopY\nkJw6MyZ1G5Q5gsCg59JSgYfn+/yPpxC3Q/fW5jkQM7TmnLjLB576LJozGVDthYKF\nH2WGR338sMP76vQpbPGwrw6ePY9u+13gksXP+J+cBSsDCC6vcONNBgaqNByU/P1K\n2ev70o4ebOWCOIVHC06mfYpjrNnNRCTKNvuJzq27tk4fWyDDkR+PO5uLs0qaBvnT\nkk2ag/7D22zFHe3Az05KdYioNG4eHgp7iTJLS2pXLH/LfhZE+7+pwxM6Quz6DLPe\n6DXhIP4cUcllxQskZsT60/fT2WYXbzEYMojki/FrIAXp/GjXANKCk2lj58JsFMo3\ndFNCA01uLWK5HNu3vf/qHFpub3+DF00Eg/aWSQ44xp/UNspuDVZjJP42FNn9qTD2\n64cbApEGDk41BbYBhTxqq/RGlrjfxGyK8pWpb6hBRnxG2Iy5caIJ7ZhMRxLNlV+V\nx5OIn0fZ1Y9Ts6XhUfuGmD9fzH6n4Eu1T3hhR3F1o1MJ4FGCp0vEpYgmXLAXoEVQ\ndby8m7wkvQrp353u5l1BRscCAwEAAQ==\n-----END
+        PUBLIC KEY-----\n'
+      US_SURPRESS_DB_STATUS_LOGS: "true"
+      USE_DEMO_DATA: "0"
+    image: ghcr.io/datalens-tech/datalens-us:1.39.0
+    networks:
+      default: null
+networks:
+  default:
+    name: datalens_default
+    enable_ipv6: false
+volumes:
+  db-postgres:
+    name: datalens_db-postgres

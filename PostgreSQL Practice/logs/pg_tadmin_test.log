@@ -1,0 +1,10 @@
+--- SELECT (ожидается OK)
+ count 
+-------
+    10
+(1 row)
+
+--- INSERT (ожидается OK)
+INSERT 0 1
+--- DELETE (ожидается permission denied)
+ERROR:  permission denied for table crew

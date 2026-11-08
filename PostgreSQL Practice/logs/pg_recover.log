@@ -1,0 +1,53 @@
+pg_restore: connecting to database for restore
+pg_restore: dropping FK CONSTRAINT crew crew_ship_id_fkey
+pg_restore: dropping CONSTRAINT ships ships_pkey
+pg_restore: dropping CONSTRAINT ships ships_name_key
+pg_restore: dropping CONSTRAINT crew crew_pkey
+pg_restore: dropping DEFAULT ships id
+pg_restore: dropping DEFAULT crew id
+pg_restore: dropping SEQUENCE ships_id_seq
+pg_restore: dropping TABLE ships
+pg_restore: dropping SEQUENCE crew_id_seq
+pg_restore: dropping TABLE crew
+pg_restore: creating TABLE "public.crew"
+pg_restore: creating SEQUENCE "public.crew_id_seq"
+pg_restore: creating SEQUENCE OWNED BY "public.crew_id_seq"
+pg_restore: creating TABLE "public.ships"
+pg_restore: creating SEQUENCE "public.ships_id_seq"
+pg_restore: creating SEQUENCE OWNED BY "public.ships_id_seq"
+pg_restore: creating DEFAULT "public.crew id"
+pg_restore: creating DEFAULT "public.ships id"
+pg_restore: processing data for table "public.crew"
+pg_restore: processing data for table "public.ships"
+pg_restore: executing SEQUENCE SET crew_id_seq
+pg_restore: executing SEQUENCE SET ships_id_seq
+pg_restore: creating CONSTRAINT "public.crew crew_pkey"
+pg_restore: creating CONSTRAINT "public.ships ships_name_key"
+pg_restore: creating CONSTRAINT "public.ships ships_pkey"
+pg_restore: creating FK CONSTRAINT "public.crew crew_ship_id_fkey"
+pg_restore: creating ACL "SCHEMA public"
+pg_restore: creating ACL "public.TABLE crew"
+pg_restore: creating ACL "public.SEQUENCE crew_id_seq"
+pg_restore: creating ACL "public.TABLE ships"
+pg_restore: creating ACL "public.SEQUENCE ships_id_seq"
+ id |    full_name    |   rank    |   ship   |   class   
+----+-----------------+-----------+----------+-----------
+  1 | Ivan Petrov     | Captain   | Aurora   | Cruiser
+  2 | Anna Smirnova   | Pilot     | Aurora   | Cruiser
+  3 | Oleg Sidorov    | Engineer  | Aurora   | Cruiser
+  4 | Maria Volkova   | Medic     | Aurora   | Cruiser
+  5 | Denis Kuznetsov | Navigator | Aurora   | Cruiser
+ 11 | Test User       | Cadet     | Aurora   | Cruiser
+  6 | Ellen Ripley    | Officer   | Nostromo | Freighter
+  7 | Arthur Dallas   | Captain   | Nostromo | Freighter
+  8 | Joan Lambert    | Navigator | Nostromo | Freighter
+  9 | Dennis Parker   | Engineer  | Nostromo | Freighter
+ 10 | Samuel Brett    | Engineer  | Nostromo | Freighter
+(11 rows)
+
+   ship   | crew_count 
+----------+------------
+ Nostromo |          5
+ Aurora   |          6
+(2 rows)
+

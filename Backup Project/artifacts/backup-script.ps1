@@ -1,13 +1,18 @@
-﻿# param(
-#     [Parameter(Mandatory=$true, HelpMessage="Enter path to Source folder to backup")]
-#     [string]$SourcePath,
+param(
+    [Parameter(Mandatory=$true, HelpMessage="Enter path to Source folder to backup")]
+    [string]$SourcePath,
     
-#     [Parameter(Mandatory=$true, HelpMessage="Enter path for saving a backup")]
-#     [string]$BackupsFolder
-# )
+    [Parameter(Mandatory=$true, HelpMessage="Enter path for saving a backup")]
+    [string]$BackupsFolder
+)
 
-$SourcePath = "C:\Users\Ботир\Backup-Project\Source"
-$BackupsFolder = "C:\Users\Ботир\Backup-Project\backups"
+# If parameters are not set
+if (-not $SourcePath) {
+    $SourcePath = "C:\Users\Ботир\Backup-Project\Source"
+}
+if (-not $BackupsFolder) {
+    $BackupsFolder = "C:\Users\Ботир\Backup-Project\backups"
+}
 
 # Testing SourcePath and BackupsFolder
 if (-not (Test-Path $SourcePath)) {
