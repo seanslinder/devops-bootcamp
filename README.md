@@ -1,4 +1,4 @@
-# Sysadmin Bootcamp
+# DevOps Bootcamp
 
 Projects and exercises:
 
